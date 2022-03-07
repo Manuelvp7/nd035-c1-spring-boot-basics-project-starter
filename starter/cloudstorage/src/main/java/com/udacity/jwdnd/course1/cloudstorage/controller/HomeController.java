@@ -86,7 +86,7 @@ public class HomeController {
             }
         }
 
-        return "home";
+        return "result";
     }
 
     @PostMapping("/notes/{id}")
@@ -113,7 +113,7 @@ public class HomeController {
             }
         }
 
-        return "home";
+        return "result";
     }
 
     @GetMapping("/notes/delete/{id}")

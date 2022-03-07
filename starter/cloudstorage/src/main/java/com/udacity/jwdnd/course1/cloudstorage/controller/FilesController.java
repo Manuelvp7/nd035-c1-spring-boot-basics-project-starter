@@ -75,9 +75,13 @@ public class FilesController {
     User user = userService.getUser(username);
 
     if (user == null){
-      submitError = "User not found at credential submission";
+      submitError = "User not found at file submission";
+      model.addAttribute("submitError", submitError);
+    }if (file.isEmpty()){
+      submitError = "Empty file at file submission";
       model.addAttribute("submitError", submitError);
     }else{
+
       int rowsAdded = fileService.saveFile(file, user);
       model.addAttribute("submitSuccess", true);
       model.addAttribute("notes", noteService.getUserNotes(user));
@@ -85,7 +89,7 @@ public class FilesController {
       model.addAttribute("files", fileService.getUserFiles(user));
     }
 
-    return "home";
+    return "result";
 
   }
 

@@ -60,7 +60,7 @@ public class CredentialsController {
             model.addAttribute("files", fileService.getUserFiles(user));
         }
 
-        return "home";
+        return "result";
     }
 
     @PostMapping("/{id}")
@@ -87,7 +87,7 @@ public class CredentialsController {
             }
         }
 
-        return "home";
+        return "result";
     }
 
     @GetMapping("/delete/{id}")

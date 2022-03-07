@@ -29,6 +29,11 @@ public class LoginPage extends WebPageImpl {
         loginButton.click();
     }
 
+    public String getSuccessAlertText(WebDriver webDriver){
+        WebElement successDiv = waitUntilElementIsAvailableById(webDriver, "succesMessage");
+        return successDiv.getText();
+    }
+
 
 
 }

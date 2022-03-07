@@ -7,6 +7,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
@@ -56,8 +58,12 @@ class CloudStorageApplicationTests {
 
 	@Test
 	public void signUpUser(){
+		WebDriverWait wait;
+		wait = new WebDriverWait(driver, 15);
+
 		driver.get("http://localhost:" + this.port + "/signup");
 		signUpPage.signUpUser("Juan Manuel", "Vilchis Pineda", "manolo", "M4nolito_130");
+		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("inputFirstName"))));
 		Assertions.assertEquals("You successfully signed up! Please continue to the login page.", signUpPage.getSuccessAlertText(driver));
 	}
 
