@@ -62,16 +62,23 @@ class CloudStorageApplicationTests {
 		wait = new WebDriverWait(driver, 15);
 
 		driver.get("http://localhost:" + this.port + "/signup");
-		signUpPage.signUpUser("Juan Manuel", "Vilchis Pineda", "manolo", "M4nolito_130");
-		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("inputFirstName"))));
+		signUpPage.signUpUser("Juan Manuel", "Vilchis Pineda", "manolo2", "manolo2");
+
+		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("inputUsername"))));
 		Assertions.assertEquals("You successfully signed up! Please continue to the login page.", signUpPage.getSuccessAlertText(driver));
 	}
 
 	@Test
-	public void loginSucces(){
-		driver.get("http://localhost:" + this.port + "/login");
-		loginPage.logInUser("manolo", "M4nolito_130");
-		this.homePage = new HomePage(driver);
+	public void loginSucces() throws InterruptedException {
+		WebDriverWait wait;
+		wait = new WebDriverWait(driver, 15);
+
+		driver.get("http://localhost:" + this.port + "/signup");
+		signUpPage.signUpUser("Juan Manuel", "Vilchis Pineda", "manolo3", "manolo3");
+		wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("inputUsername"))));
+
+		loginPage.logInUser("manolo3", "manolo3");
+
 		Assertions.assertEquals("Home", driver.getTitle() );
 	}
 
@@ -101,7 +108,7 @@ class CloudStorageApplicationTests {
 		notesPage.createNote( driver,noteTitle, noteDescription);
 
 		//Then
-		WebElement noteElement = driver.findElement(By.xpath("//*[text()='NOTE TITLE']"));
+		WebElement noteElement = driver.findElement(By.xpath("//*[text()='Success']"));
 		Assertions.assertTrue(noteElement.isEnabled());
 	}
 
@@ -132,7 +139,7 @@ class CloudStorageApplicationTests {
 		credentialsPage.createCredential(driver, credentialUrl, credentialUsername, credentialPassword);
 
 		//Then
-		WebElement noteElement = driver.findElement(By.xpath("//*[text()='test@user.com']"));
+		WebElement noteElement = driver.findElement(By.xpath("//*[text()='Success']"));
 		Assertions.assertTrue(noteElement.isEnabled());
 	}
 }
