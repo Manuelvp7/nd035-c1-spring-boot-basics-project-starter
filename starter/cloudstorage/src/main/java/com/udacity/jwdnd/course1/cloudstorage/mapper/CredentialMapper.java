@@ -17,6 +17,9 @@ public interface CredentialMapper {
     @Options(useGeneratedKeys = true, keyProperty = "credentialid")
     int insert(Credential credential);
 
+    @Select("SELECT * FROM CREDENTIALS WHERE url LIKE #{url} AND username LIKE #{username} AND userid = #{userid}")
+    Credential selectByUrlAndUsername(int userid, String url, String username);
+
     @Select("SELECT * FROM CREDENTIALS WHERE credentialid = #{credentialid} AND userid = #{userid}")
     Credential selectById(int noteid, int userid);
 

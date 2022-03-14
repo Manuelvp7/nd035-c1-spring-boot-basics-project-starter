@@ -13,6 +13,9 @@ public class HomePage extends WebPageImpl {
     @FindBy(id = "nav-credentials-tab")
     private WebElement navCredentialsTab;
 
+    @FindBy(id = "logout-btn")
+    private WebElement logoutBtn;
+
     public HomePage(WebDriver webDriver) {
         super(webDriver);
         waitUntilElementIsAvailableById(webDriver, "logout-div");
@@ -25,6 +28,10 @@ public class HomePage extends WebPageImpl {
 
     public void clickOnNotesTab(){
         navNotesTab.click();
+    }
+
+    public void clickLogoutBtn(){
+        logoutBtn.click();
     }
 
     public void waitUntilHomePageRenders(WebDriver webDriver){

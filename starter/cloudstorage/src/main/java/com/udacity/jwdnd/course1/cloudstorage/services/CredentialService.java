@@ -38,6 +38,11 @@ public class CredentialService {
 
         return  this.credentialMapper.insert(credential);
     }
+
+    public Credential getByUrlAndUsername(int userId, String url, String username){
+        return this.credentialMapper.selectByUrlAndUsername(userId, url, username);
+    }
+
     public int deleteCredential(int credential, int userid){
         return credentialMapper.delete(credential, userid);
     }

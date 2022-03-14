@@ -69,6 +69,33 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
+	public void logoutUser(){
+		//Given
+		String firstName = "manolo";
+		String lastName = "manolo";
+		String userName = "manolo";
+		String password = "manolo";
+
+		String noteTitle = "NOTE TITLE";
+		String noteDescription = "DESCRIPTION";
+
+		//When
+		driver.get("http://localhost:" + this.port + "/signup");
+		signUpPage.signUpUser(firstName, lastName, userName, password);
+
+		driver.get("http://localhost:" + this.port + "/login");
+		loginPage.logInUser(userName, password);
+
+		this.homePage = new HomePage(driver);
+		this.homePage.clickLogoutBtn();
+
+		driver.get("http://localhost:" + this.port + "/home");
+		//Then
+		WebElement noteElement = driver.findElement(By.xpath("//*[text()='Login']"));
+		Assertions.assertTrue(noteElement.isEnabled());
+	}
+
+	@Test
 	public void loginSucces() throws InterruptedException {
 		WebDriverWait wait;
 		wait = new WebDriverWait(driver, 15);
@@ -113,6 +140,76 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
+	void itShouldEditNote() {
+		//Given
+		String firstName = "manolo";
+		String lastName = "manolo";
+		String userName = "manolo";
+		String password = "manolo";
+
+		String noteTitle = "EDIT TITLE";
+		String noteDescription = "EDIT DESCRIPTION";
+
+		//When
+		driver.get("http://localhost:" + this.port + "/signup");
+		signUpPage.signUpUser(firstName, lastName, userName, password);
+
+		driver.get("http://localhost:" + this.port + "/login");
+		loginPage.logInUser(userName, password);
+
+		this.homePage = new HomePage(driver);
+		this.homePage.clickOnNotesTab();
+
+		NotesPage notesPage = new NotesPage(driver);
+
+		notesPage.waitUntilHomePageRenders( driver);
+		notesPage.createNote(driver, noteTitle, noteDescription);
+		ResultPage resultPage = new ResultPage(driver);
+		resultPage.returnToHome();
+		this.homePage.clickOnNotesTab();
+		notesPage.editNote( " UPDATED", " UPDATED", driver);
+
+		//Then
+		WebElement noteElement = driver.findElement(By.xpath("//*[text()='Success']"));
+		Assertions.assertTrue(noteElement.isEnabled());
+	}
+
+	@Test
+	void itShouldDeleteNote() {
+		//Given
+		String firstName = "manolo";
+		String lastName = "manolo";
+		String userName = "manolo";
+		String password = "manolo";
+
+		String noteTitle = "DELETE TITLE";
+		String noteDescription = "DELETE DESCRIPTION";
+
+		//When
+		driver.get("http://localhost:" + this.port + "/signup");
+		signUpPage.signUpUser(firstName, lastName, userName, password);
+
+		driver.get("http://localhost:" + this.port + "/login");
+		loginPage.logInUser(userName, password);
+
+		this.homePage = new HomePage(driver);
+		this.homePage.clickOnNotesTab();
+
+		NotesPage notesPage = new NotesPage(driver);
+
+		notesPage.waitUntilHomePageRenders( driver);
+		notesPage.createNote( driver,noteTitle, noteDescription);
+		ResultPage resultPage = new ResultPage(driver);
+		resultPage.returnToHome();
+		this.homePage.clickOnNotesTab();
+		notesPage.deleteNote( 1, driver);
+
+		//Then
+		WebElement noteElement = driver.findElement(By.xpath("//*[text()='Success']"));
+		Assertions.assertTrue(noteElement.isEnabled());
+	}
+
+	@Test
 	void itShouldCreateCredential() {
 		//Given
 		String firstName = "manolo";
@@ -120,7 +217,7 @@ class CloudStorageApplicationTests {
 		String userName = "manolo";
 		String password = "manolo";
 
-		String credentialUrl = "www.test.com";
+		String credentialUrl = "http://www.test.com";
 		String credentialUsername = "test@user.com";
 		String credentialPassword = "P4ssw0rd";
 
@@ -137,6 +234,76 @@ class CloudStorageApplicationTests {
 		CredentialsPage credentialsPage = new CredentialsPage(driver);
 		credentialsPage.waitUntilHomePageRenders(driver);
 		credentialsPage.createCredential(driver, credentialUrl, credentialUsername, credentialPassword);
+
+		//Then
+		WebElement noteElement = driver.findElement(By.xpath("//*[text()='Success']"));
+		Assertions.assertTrue(noteElement.isEnabled());
+	}
+
+	@Test
+	void itShouldEditCredential() {
+		//Given
+		String firstName = "manolo";
+		String lastName = "manolo";
+		String userName = "manolo";
+		String password = "manolo";
+
+		String credentialUrl = "http://www.test.edit.com";
+		String credentialUsername = "test.edit@user.com";
+		String credentialPassword = "P4ssw0rd";
+
+		//When
+		driver.get("http://localhost:" + this.port + "/signup");
+		signUpPage.signUpUser(firstName, lastName, userName, password);
+
+		driver.get("http://localhost:" + this.port + "/login");
+		loginPage.logInUser(userName, password);
+
+		this.homePage = new HomePage(driver);
+		this.homePage.clickOnCredentialsTab();
+
+		CredentialsPage credentialsPage = new CredentialsPage(driver);
+		credentialsPage.waitUntilHomePageRenders(driver);
+		credentialsPage.createCredential(driver, credentialUrl, credentialUsername, credentialPassword);
+		ResultPage resultPage = new ResultPage(driver);
+		resultPage.returnToHome();
+		this.homePage.clickOnCredentialsTab();
+		credentialsPage.editCredential( "updated", "updated", "updated", driver);
+
+		//Then
+		WebElement noteElement = driver.findElement(By.xpath("//*[text()='Success']"));
+		Assertions.assertTrue(noteElement.isEnabled());
+	}
+
+	@Test
+	void itShouldDeleteCredential() {
+		//Given
+		String firstName = "manolo";
+		String lastName = "manolo";
+		String userName = "manolo";
+		String password = "manolo";
+
+		String credentialUrl = "http://www.test.com";
+		String credentialUsername = "test@user.com";
+		String credentialPassword = "P4ssw0rd";
+
+		//When
+		driver.get("http://localhost:" + this.port + "/signup");
+		signUpPage.signUpUser(firstName, lastName, userName, password);
+
+		driver.get("http://localhost:" + this.port + "/login");
+		loginPage.logInUser(userName, password);
+
+		this.homePage = new HomePage(driver);
+		this.homePage.clickOnCredentialsTab();
+
+		CredentialsPage credentialsPage = new CredentialsPage(driver);
+		credentialsPage.waitUntilHomePageRenders(driver);
+		credentialsPage.createCredential(driver, credentialUrl, credentialUsername, credentialPassword);
+		ResultPage resultPage = new ResultPage(driver);
+		resultPage.returnToHome();
+		this.homePage.clickOnCredentialsTab();
+		credentialsPage.deleteCredential( 1, driver);
 
 		//Then
 		WebElement noteElement = driver.findElement(By.xpath("//*[text()='Success']"));

@@ -5,6 +5,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class NotesPage extends WebPageImpl {
 
@@ -35,24 +37,27 @@ public class NotesPage extends WebPageImpl {
     submitButton.click();
   }
 
-  public void editNote(int id, String noteTitle, String noteDescription, WebDriver webDriver){
-    waitUntilElementIsAvailableById(webDriver, "edit-note-"+id);
-    WebElement editButton =  webDriver.findElement(By.id("edit-note-"+id));
-    WebElement titleLabel =  webDriver.findElement(By.id("note-title-"+id));
-    WebElement descriptionLabel =  webDriver.findElement(By.id("note-description-"+id));
+  public void editNote(String noteTitle, String noteDescription, WebDriver webDriver){
+
+    WebDriverWait wait = new WebDriverWait(webDriver, 15);
+    wait.until(ExpectedConditions.visibilityOf(webDriver.findElement(By.cssSelector("button[id^='edit-note-']"))));
+
+    WebElement editButton =  webDriver.findElement(By.cssSelector("button[id^='edit-note-']"));
+
     editButton.click();
+    waitUntilElementIsAvailableById(webDriver,"footer-note-submit");
     titleInput.sendKeys(noteTitle);
     descriptionInput.sendKeys(noteDescription);
     submitButton.click();
-    waitUntilElementIsAvailableById(webDriver, "edit-note-"+id);
+
 
   }
 
-  public void deleteNote(String noteTitle, String noteDescription){
-    addNoteButton.click();
-    titleInput.sendKeys(noteTitle);
-    descriptionInput.sendKeys(noteDescription);
-    submitButton.click();
+  public void deleteNote(int id, WebDriver webDriver){
+
+    waitUntilElementIsAvailableById(webDriver, "delete-note-"+id);
+    WebElement deleteButton =  webDriver.findElement(By.id("delete-note-"+id));
+    deleteButton.click();
   }
 
 

@@ -16,7 +16,21 @@ public class NoteService {
         this.noteMapper = noteMapper;
     }
 
-    public int createNote(Note note){ return noteMapper.insert(note); }
+    public int createNote(Note note) throws Exception {
+
+        try{
+            return noteMapper.insert(note);
+        }catch (Exception e){
+            throw new Exception("CREATE NOTE SERVICE ERROR");
+        }
+
+    }
+
+    public Note getNoteByTittleAndDescription(Note note){
+        return noteMapper.selectByTitleAndDescription(note.getUserid(),
+                note.getNotedescription(), note.getNotetitle());
+
+    }
 
     public List<Note> getUserNotes(User user){
         return noteMapper.select(user);

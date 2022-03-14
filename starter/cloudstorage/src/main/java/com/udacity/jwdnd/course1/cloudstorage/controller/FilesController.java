@@ -74,6 +74,8 @@ public class FilesController {
     String username = authentication.getName();
     User user = userService.getUser(username);
 
+
+
     if (user == null){
       submitError = "User not found at file submission";
       model.addAttribute("submitError", submitError);
@@ -81,12 +83,17 @@ public class FilesController {
       submitError = "Empty file at file submission";
       model.addAttribute("submitError", submitError);
     }else{
-
-      int rowsAdded = fileService.saveFile(file, user);
-      model.addAttribute("submitSuccess", true);
-      model.addAttribute("notes", noteService.getUserNotes(user));
-      model.addAttribute("credentials", credentialService.getUserCredentials(user));
-      model.addAttribute("files", fileService.getUserFiles(user));
+      File existingFile = fileService. selectByFileName(user.getUserid(), file.getOriginalFilename());
+      if (existingFile != null){
+        submitError = "Filename already exists";
+        model.addAttribute("submitError", submitError);
+      }else{
+        int rowsAdded = fileService.saveFile(file, user);
+        model.addAttribute("submitSuccess", true);
+        model.addAttribute("notes", noteService.getUserNotes(user));
+        model.addAttribute("credentials", credentialService.getUserCredentials(user));
+        model.addAttribute("files", fileService.getUserFiles(user));
+      }
     }
 
     return "result";
@@ -121,7 +128,7 @@ public class FilesController {
   }
 
   @GetMapping("/delete/{id}")
-  public String deleteNote( @PathVariable int id, Authentication authentication, Note note, Credential credential,Model model){
+  public String deleteFile( @PathVariable int id, Authentication authentication, Note note, Credential credential,Model model){
 
     String submitError = null;
 
@@ -144,7 +151,7 @@ public class FilesController {
       }
     }
 
-    return "home";
+    return "result";
   }
 
 

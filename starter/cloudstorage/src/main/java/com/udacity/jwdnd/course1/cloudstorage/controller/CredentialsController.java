@@ -7,14 +7,18 @@ import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
-
+import org.apache.commons.validator.routines.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/credentials")
@@ -24,6 +28,8 @@ public class CredentialsController {
     private CredentialService credentialService;
     private NoteService noteService;
     private FileService fileService;
+    private final String [] schemes = {"http", "https"};
+    private final UrlValidator urlValidator;
 
     private static final Logger logger = LoggerFactory.getLogger(CredentialsController.class);
 
@@ -36,6 +42,7 @@ public class CredentialsController {
         this.credentialService = credentialService;
         this.noteService = noteService;
         this.fileService = fileService;
+        urlValidator = new UrlValidator(schemes);
     }
 
 
@@ -44,21 +51,33 @@ public class CredentialsController {
 
         String submitError = null;
 
-        String username = authentication.getName();
-        User user = userService.getUser(username);
 
-        if (user == null){
-            submitError = "User not found at credential submission";
+        if (!urlValidator.isValid(credential.getUrl())){
+            submitError = "Invalid url at credential submission";
             model.addAttribute("submitError", submitError);
         }else{
-            credential.setUserid(user.getUserid());
-            int rowsAdded = credentialService.save(credential);
+            String username = authentication.getName();
+            User user = userService.getUser(username);
+            if (user == null){
+                submitError = "User not found at credential submission";
+                model.addAttribute("submitError", submitError);
+            }else{
+                credential.setUserid(user.getUserid());
 
-            model.addAttribute("submitSuccess", true);
-            model.addAttribute("notes", noteService.getUserNotes(user));
-            model.addAttribute("credentials", credentialService.getUserCredentials(user));
-            model.addAttribute("files", fileService.getUserFiles(user));
+                Credential createdCredential = this.credentialService.getByUrlAndUsername(user.getUserid(), credential.getUrl(), credential.getUsername());
+                if (createdCredential != null){
+                    submitError = "User already available.";
+                    model.addAttribute("submitError", submitError);
+                }else{
+                    int rowsAdded = credentialService.save(credential);
+                    model.addAttribute("submitSuccess", true);
+                    model.addAttribute("notes", noteService.getUserNotes(user));
+                    model.addAttribute("credentials", credentialService.getUserCredentials(user));
+                    model.addAttribute("files", fileService.getUserFiles(user));
+                }
+            }
         }
+
 
         return "result";
     }
@@ -114,7 +133,7 @@ public class CredentialsController {
             }
         }
 
-        return "home";
+        return "result";
     }
 
 

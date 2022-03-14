@@ -22,6 +22,9 @@ public interface FileMapper {
   @Select("SELECT * FROM FILES WHERE userid = #{userid}")
   List<File> select(User user);
 
+  @Select("SELECT * FROM FILES WHERE filename LIKE #{filename} AND userid = #{userid}")
+  File selectByFileName(String filename, int userid);
+
   @Select("SELECT * FROM FILES WHERE fileId = #{fileId} AND userid = #{userid}")
   File selectById(int fileId, int userid);
 

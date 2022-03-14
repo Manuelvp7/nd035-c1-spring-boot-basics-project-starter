@@ -60,7 +60,7 @@ public class HomeController {
 
 
     @PostMapping("/notes")
-    public String notesPostRequest(Authentication authentication, Note note, Credential credential, Model model){
+    public String notesPostRequest(Authentication authentication, Note note, Credential credential, Model model) throws Exception {
 
         String submitError = null;
 
@@ -73,16 +73,36 @@ public class HomeController {
             model.addAttribute("submitError", submitError);
         }else{
 
-            note.setUserid(user.getUserid());
-            int rowsAdded = noteService.createNote(note);
-            if (rowsAdded < 1 ){
-                submitError = "There was a problem submitting your note. Please try again";
-                model.addAttribute("submitError", submitError);
-            }else{
-                model.addAttribute("submitSuccess", true);
-                model.addAttribute("notes", noteService.getUserNotes(user));
-                model.addAttribute("credentials", credentialService.getUserCredentials(user));
-                model.addAttribute("files", fileService.getUserFiles(user));
+            try{
+                note.setUserid(user.getUserid());
+                Note createdNote = noteService.getNoteByTittleAndDescription(note);
+                if (createdNote != null){
+                    submitError = "Note already available";
+                    model.addAttribute("submitError", submitError);
+                }else{
+
+                    int rowsAdded = noteService.createNote(note);
+                    if (rowsAdded < 1 ){
+                        submitError = "There was a problem submitting your note. Please try again";
+                        model.addAttribute("submitError", submitError);
+                    }else{
+                        model.addAttribute("submitSuccess", true);
+                        model.addAttribute("notes", noteService.getUserNotes(user));
+                        model.addAttribute("credentials", credentialService.getUserCredentials(user));
+                        model.addAttribute("files", fileService.getUserFiles(user));
+                    }
+                }
+
+            }catch (Exception e){
+
+                if (note.getNotedescription().length() > 1000){
+                    submitError = "Note can't be saved as description exceed 1000 characters";
+                    model.addAttribute("submitError", submitError);
+
+                } else{
+                    submitError = "There was a problem submitting your note. Please try again";
+                    model.addAttribute("submitError", submitError);
+                }
             }
         }
 
@@ -101,20 +121,28 @@ public class HomeController {
             submitError = "User not found at note update";
             model.addAttribute("submitError", submitError);
         }else {
-            int rowsUpdates = noteService.updateNote(note);
-            if (rowsUpdates < 1 ){
+            try{
+                int rowsUpdates = noteService.updateNote(note);
+                if (rowsUpdates < 1 ){
+                    submitError = "There was a problem submitting your note. Please try again";
+                    model.addAttribute("submitError", submitError);
+                }else{
+                    model.addAttribute("submitSuccess", true);
+                    model.addAttribute("notes", noteService.getUserNotes(user));
+                    model.addAttribute("credentials", credentialService.getUserCredentials(user));
+                    model.addAttribute("files", fileService.getUserFiles(user));
+                }
+            }catch (Exception e){
                 submitError = "There was a problem submitting your note. Please try again";
                 model.addAttribute("submitError", submitError);
-            }else{
-                model.addAttribute("submitSuccess", true);
-                model.addAttribute("notes", noteService.getUserNotes(user));
-                model.addAttribute("credentials", credentialService.getUserCredentials(user));
-                model.addAttribute("files", fileService.getUserFiles(user));
             }
+
         }
 
         return "result";
     }
+
+
 
     @GetMapping("/notes/delete/{id}")
     public String deleteNote( @PathVariable int id, Authentication authentication, Note note, Credential credential, Model model){
@@ -140,7 +168,7 @@ public class HomeController {
             }
         }
 
-        return "home";
+        return "result";
     }
 
 }

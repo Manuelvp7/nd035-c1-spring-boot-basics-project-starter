@@ -38,12 +38,17 @@ public class FileService {
     return files;
   }
 
+  public File selectByFileName(int id, String filename){
+    return this.fileMapper.selectByFileName(filename, id);
+  }
+
   public File getFile(int id, int userid){
     return fileMapper.selectById(id,userid);
 
   }
 
   public int deleteFile(int id, int userid){
+
     return fileMapper.delete(id, userid);
   }
 
